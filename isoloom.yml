@@ -1,0 +1,60 @@
+# yaml-language-server: $schema=https://www.isoloom.com/schema/v1.json
+# Hadoop YARN unauthenticated RCE (Vulhub, by phith0n and the Vulhub contributors) as an Isoloom spec:
+# Vulhub's hadoop/unauthorized-yarn, vendored in app/: four machines from the published image
+# vulhub/hadoop:2.8.1, with the settings and commands of Vulhub's compose file baked in (build/).
+# `isoloom generate`, then `isoloom run docker`.
+version: 1
+name: vulhub-hadoop-unauthorized-yarn
+
+networks:
+  lab: { cidr: 10.60.251.0/24, internet: false }
+
+machines:
+  namenode:
+    networks: { lab: 20 }
+    services:
+      - { port: 8020, name: hdfs }
+      - { port: 50070, name: namenode-web, http: true, publish: 50070 }
+    resources: { cpus: 1, memory_mb: 768 }
+    docker:
+      build: build/namenode
+
+  datanode:
+    networks: { lab: 21 }
+    services:
+      - { port: 50010, name: data }
+      - { port: 50075, name: datanode-web }
+    resources: { cpus: 1, memory_mb: 768 }
+    depends_on: [namenode]
+    docker:
+      build: build/datanode
+
+  resourcemanager:
+    networks: { lab: 10 }
+    services:
+      - { port: 8088, name: web, http: true, publish: 8088 }
+      - { port: 8032, name: rm-rpc }
+    resources: { cpus: 1, memory_mb: 1024 }
+    depends_on: [namenode]
+    docker:
+      build: build/resourcemanager
+
+  nodemanager:
+    networks: { lab: 11 }
+    services: [{ port: 8042, name: nodemanager-web }]
+    resources: { cpus: 1, memory_mb: 1024 }
+    depends_on: [resourcemanager]
+    docker:
+      build: build/nodemanager
+
+checks:
+  - name: the ResourceManager answers
+    http: http://resourcemanager:8088/cluster
+    wait: 300
+  - name: the REST API is Hadoop 2.8.1 and has a NodeManager
+    script: checks/cluster.sh
+    wait: 300
+
+message: |
+  A Hadoop 2.8.1 YARN ResourceManager answers at http://localhost:{{ machines.resourcemanager.services.0.publish }}/cluster.
+  Its REST API, under /ws/v1/cluster/apps, takes new applications from anyone.

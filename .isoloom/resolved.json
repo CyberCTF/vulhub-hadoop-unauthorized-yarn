@@ -1,0 +1,497 @@
+{
+  "generated_by_isoloom": "from isoloom.yml; don't edit: change the spec and run `isoloom generate` (`isoloom check` fails when this file is out of date)",
+  "resolved_version": 1,
+  "name": "vulhub-hadoop-unauthorized-yarn",
+  "instance": null,
+  "inputs": [],
+  "networks": {
+    "lab": {
+      "cidr": "10.60.251.0/24",
+      "docker_cidr": "10.60.251.0/24",
+      "internet": false,
+      "gateway": null,
+      "gateway_address": "10.60.251.1",
+      "router": null,
+      "controller": "10.60.251.253"
+    }
+  },
+  "reach": [],
+  "machines": {
+    "namenode": {
+      "access": false,
+      "supplied": false,
+      "shapes": [
+        "docker"
+      ],
+      "arch": "amd64",
+      "os": null,
+      "windows": false,
+      "addresses": {
+        "lab": "10.60.251.20"
+      },
+      "docker_addresses": {
+        "lab": "10.60.251.20"
+      },
+      "services": [
+        {
+          "port": 8020,
+          "name": "hdfs",
+          "http": false,
+          "publish": null
+        },
+        {
+          "port": 50070,
+          "name": "namenode-web",
+          "http": true,
+          "publish": 50070
+        }
+      ],
+      "depends_on": [],
+      "inputs": [],
+      "volumes": {},
+      "resources": {
+        "cpus": 1,
+        "memory_mb": 768,
+        "disk_gb": 20
+      },
+      "gateway_of": [],
+      "routes": [],
+      "default_gateway": null,
+      "offline": true
+    },
+    "datanode": {
+      "access": false,
+      "supplied": false,
+      "shapes": [
+        "docker"
+      ],
+      "arch": "amd64",
+      "os": null,
+      "windows": false,
+      "addresses": {
+        "lab": "10.60.251.21"
+      },
+      "docker_addresses": {
+        "lab": "10.60.251.21"
+      },
+      "services": [
+        {
+          "port": 50010,
+          "name": "data",
+          "http": false,
+          "publish": null
+        },
+        {
+          "port": 50075,
+          "name": "datanode-web",
+          "http": false,
+          "publish": null
+        }
+      ],
+      "depends_on": [
+        "namenode"
+      ],
+      "inputs": [],
+      "volumes": {},
+      "resources": {
+        "cpus": 1,
+        "memory_mb": 768,
+        "disk_gb": 20
+      },
+      "gateway_of": [],
+      "routes": [],
+      "default_gateway": null,
+      "offline": true
+    },
+    "resourcemanager": {
+      "access": false,
+      "supplied": false,
+      "shapes": [
+        "docker"
+      ],
+      "arch": "amd64",
+      "os": null,
+      "windows": false,
+      "addresses": {
+        "lab": "10.60.251.10"
+      },
+      "docker_addresses": {
+        "lab": "10.60.251.10"
+      },
+      "services": [
+        {
+          "port": 8088,
+          "name": "web",
+          "http": true,
+          "publish": 8088
+        },
+        {
+          "port": 8032,
+          "name": "rm-rpc",
+          "http": false,
+          "publish": null
+        }
+      ],
+      "depends_on": [
+        "namenode"
+      ],
+      "inputs": [],
+      "volumes": {},
+      "resources": {
+        "cpus": 1,
+        "memory_mb": 1024,
+        "disk_gb": 20
+      },
+      "gateway_of": [],
+      "routes": [],
+      "default_gateway": null,
+      "offline": true
+    },
+    "nodemanager": {
+      "access": false,
+      "supplied": false,
+      "shapes": [
+        "docker"
+      ],
+      "arch": "amd64",
+      "os": null,
+      "windows": false,
+      "addresses": {
+        "lab": "10.60.251.11"
+      },
+      "docker_addresses": {
+        "lab": "10.60.251.11"
+      },
+      "services": [
+        {
+          "port": 8042,
+          "name": "nodemanager-web",
+          "http": false,
+          "publish": null
+        }
+      ],
+      "depends_on": [
+        "resourcemanager"
+      ],
+      "inputs": [],
+      "volumes": {},
+      "resources": {
+        "cpus": 1,
+        "memory_mb": 1024,
+        "disk_gb": 20
+      },
+      "gateway_of": [],
+      "routes": [],
+      "default_gateway": null,
+      "offline": true
+    }
+  },
+  "start_order": [
+    "namenode",
+    "datanode",
+    "resourcemanager",
+    "nodemanager"
+  ],
+  "clones": {},
+  "tools": {},
+  "groups": {},
+  "router": null,
+  "controller": {
+    "addresses": {
+      "lab": "10.60.251.253"
+    }
+  },
+  "published": [
+    {
+      "machine": "namenode",
+      "port": 50070,
+      "host_port": 50070
+    },
+    {
+      "machine": "resourcemanager",
+      "port": 8088,
+      "host_port": 8088
+    }
+  ],
+  "targets": {
+    "possible": [
+      "docker",
+      "hosted",
+      "docker-vm",
+      "cloud-docker",
+      "kubernetes"
+    ],
+    "generated": [
+      "docker",
+      "hosted",
+      "docker-vm",
+      "cloud-docker",
+      "kubernetes"
+    ],
+    "refused": {},
+    "not_possible": {
+      "hybrid": "only when some machines are containers and others are VMs",
+      "vagrant": "needs `vm:` on namenode, datanode, resourcemanager, nodemanager",
+      "proxmox": "needs `vm:` on namenode, datanode, resourcemanager, nodemanager",
+      "cloud-vm": "needs `vm:` on namenode, datanode, resourcemanager, nodemanager",
+      "external": "needs `external:` on namenode, datanode, resourcemanager, nodemanager"
+    }
+  },
+  "checks": {
+    "default_position": "networks",
+    "positions": [
+      {
+        "position": "networks",
+        "machine": null,
+        "runner": "isoloom-check",
+        "checks": [
+          {
+            "name": "the ResourceManager answers",
+            "derived": false,
+            "kind": "http",
+            "target": "http://resourcemanager:8088/cluster",
+            "expect": "200",
+            "wait": 300
+          },
+          {
+            "name": "the REST API is Hadoop 2.8.1 and has a NodeManager",
+            "derived": false,
+            "kind": "script",
+            "target": "checks/cluster.sh",
+            "expect": "",
+            "wait": 300
+          }
+        ]
+      },
+      {
+        "position": "namenode",
+        "machine": "namenode",
+        "runner": "isoloom-check-namenode",
+        "checks": [
+          {
+            "name": "datanode:50010 from namenode",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.251.21:50010",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "datanode:50075 from namenode",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.251.21:50075",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "resourcemanager:8088 from namenode",
+            "derived": true,
+            "kind": "http",
+            "target": "http://10.60.251.10:8088/",
+            "expect": "any",
+            "wait": 30
+          },
+          {
+            "name": "resourcemanager:8032 from namenode",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.251.10:8032",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "nodemanager:8042 from namenode",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.251.11:8042",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "no internet from namenode",
+            "derived": true,
+            "kind": "http",
+            "target": "http://1.1.1.1/",
+            "expect": "blocked",
+            "wait": 0
+          }
+        ]
+      },
+      {
+        "position": "datanode",
+        "machine": "datanode",
+        "runner": "isoloom-check-datanode",
+        "checks": [
+          {
+            "name": "namenode:8020 from datanode",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.251.20:8020",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "namenode:50070 from datanode",
+            "derived": true,
+            "kind": "http",
+            "target": "http://10.60.251.20:50070/",
+            "expect": "any",
+            "wait": 30
+          },
+          {
+            "name": "resourcemanager:8088 from datanode",
+            "derived": true,
+            "kind": "http",
+            "target": "http://10.60.251.10:8088/",
+            "expect": "any",
+            "wait": 30
+          },
+          {
+            "name": "resourcemanager:8032 from datanode",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.251.10:8032",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "nodemanager:8042 from datanode",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.251.11:8042",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "no internet from datanode",
+            "derived": true,
+            "kind": "http",
+            "target": "http://1.1.1.1/",
+            "expect": "blocked",
+            "wait": 0
+          }
+        ]
+      },
+      {
+        "position": "resourcemanager",
+        "machine": "resourcemanager",
+        "runner": "isoloom-check-resourcemanager",
+        "checks": [
+          {
+            "name": "namenode:8020 from resourcemanager",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.251.20:8020",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "namenode:50070 from resourcemanager",
+            "derived": true,
+            "kind": "http",
+            "target": "http://10.60.251.20:50070/",
+            "expect": "any",
+            "wait": 30
+          },
+          {
+            "name": "datanode:50010 from resourcemanager",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.251.21:50010",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "datanode:50075 from resourcemanager",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.251.21:50075",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "nodemanager:8042 from resourcemanager",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.251.11:8042",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "no internet from resourcemanager",
+            "derived": true,
+            "kind": "http",
+            "target": "http://1.1.1.1/",
+            "expect": "blocked",
+            "wait": 0
+          }
+        ]
+      },
+      {
+        "position": "nodemanager",
+        "machine": "nodemanager",
+        "runner": "isoloom-check-nodemanager",
+        "checks": [
+          {
+            "name": "namenode:8020 from nodemanager",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.251.20:8020",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "namenode:50070 from nodemanager",
+            "derived": true,
+            "kind": "http",
+            "target": "http://10.60.251.20:50070/",
+            "expect": "any",
+            "wait": 30
+          },
+          {
+            "name": "datanode:50010 from nodemanager",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.251.21:50010",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "datanode:50075 from nodemanager",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.251.21:50075",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "resourcemanager:8088 from nodemanager",
+            "derived": true,
+            "kind": "http",
+            "target": "http://10.60.251.10:8088/",
+            "expect": "any",
+            "wait": 30
+          },
+          {
+            "name": "resourcemanager:8032 from nodemanager",
+            "derived": true,
+            "kind": "tcp",
+            "target": "10.60.251.10:8032",
+            "expect": "open",
+            "wait": 30
+          },
+          {
+            "name": "no internet from nodemanager",
+            "derived": true,
+            "kind": "http",
+            "target": "http://1.1.1.1/",
+            "expect": "blocked",
+            "wait": 0
+          }
+        ]
+      }
+    ]
+  },
+  "message": "A Hadoop 2.8.1 YARN ResourceManager answers at http://localhost:8088/cluster.\nIts REST API, under /ws/v1/cluster/apps, takes new applications from anyone.\n"
+}
