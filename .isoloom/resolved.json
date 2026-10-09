@@ -234,7 +234,8 @@
       "vagrant": "needs `vm:` on namenode, datanode, resourcemanager, nodemanager",
       "proxmox": "needs `vm:` on namenode, datanode, resourcemanager, nodemanager",
       "cloud-vm": "needs `vm:` on namenode, datanode, resourcemanager, nodemanager",
-      "external": "needs `external:` on namenode, datanode, resourcemanager, nodemanager"
+      "external": "needs `external:` on namenode, datanode, resourcemanager, nodemanager",
+      "cloud-services": "left out by `targets:`"
     }
   },
   "checks": {

@@ -9,6 +9,9 @@ services:
   namenode:
     build:
       context: ../../build/namenode
+      labels:
+        isoloom.managed: 'true'
+        isoloom.environment: vulhub-hadoop-unauthorized-yarn
     image: isoloom/vulhub-hadoop-unauthorized-yarn-namenode
     platform: linux/amd64
     hostname: namenode
@@ -41,6 +44,8 @@ services:
     labels:
       isoloom.service.hdfs: tcp:8020
       isoloom.service.namenode-web: http:50070
+      isoloom.managed: 'true'
+      isoloom.environment: vulhub-hadoop-unauthorized-yarn
     restart: unless-stopped
   namenode-routes:
     image: alpine:3.20
@@ -62,9 +67,15 @@ services:
       namenode:
         condition: service_started
     restart: unless-stopped
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: vulhub-hadoop-unauthorized-yarn
   datanode:
     build:
       context: ../../build/datanode
+      labels:
+        isoloom.managed: 'true'
+        isoloom.environment: vulhub-hadoop-unauthorized-yarn
     image: isoloom/vulhub-hadoop-unauthorized-yarn-datanode
     platform: linux/amd64
     hostname: datanode
@@ -99,6 +110,8 @@ services:
     labels:
       isoloom.service.data: tcp:50010
       isoloom.service.datanode-web: tcp:50075
+      isoloom.managed: 'true'
+      isoloom.environment: vulhub-hadoop-unauthorized-yarn
     restart: unless-stopped
   datanode-routes:
     image: alpine:3.20
@@ -120,9 +133,15 @@ services:
       datanode:
         condition: service_started
     restart: unless-stopped
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: vulhub-hadoop-unauthorized-yarn
   resourcemanager:
     build:
       context: ../../build/resourcemanager
+      labels:
+        isoloom.managed: 'true'
+        isoloom.environment: vulhub-hadoop-unauthorized-yarn
     image: isoloom/vulhub-hadoop-unauthorized-yarn-resourcemanager
     platform: linux/amd64
     hostname: resourcemanager
@@ -159,6 +178,8 @@ services:
     labels:
       isoloom.service.web: http:8088
       isoloom.service.rm-rpc: tcp:8032
+      isoloom.managed: 'true'
+      isoloom.environment: vulhub-hadoop-unauthorized-yarn
     restart: unless-stopped
   resourcemanager-routes:
     image: alpine:3.20
@@ -180,9 +201,15 @@ services:
       resourcemanager:
         condition: service_started
     restart: unless-stopped
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: vulhub-hadoop-unauthorized-yarn
   nodemanager:
     build:
       context: ../../build/nodemanager
+      labels:
+        isoloom.managed: 'true'
+        isoloom.environment: vulhub-hadoop-unauthorized-yarn
     image: isoloom/vulhub-hadoop-unauthorized-yarn-nodemanager
     platform: linux/amd64
     hostname: nodemanager
@@ -216,6 +243,8 @@ services:
           memory: 1024M
     labels:
       isoloom.service.nodemanager-web: tcp:8042
+      isoloom.managed: 'true'
+      isoloom.environment: vulhub-hadoop-unauthorized-yarn
     restart: unless-stopped
   nodemanager-routes:
     image: alpine:3.20
@@ -237,6 +266,9 @@ services:
       nodemanager:
         condition: service_started
     restart: unless-stopped
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: vulhub-hadoop-unauthorized-yarn
   isoloom-check:
     image: curlimages/curl:8.11.1
     profiles:
@@ -270,6 +302,9 @@ services:
         condition: service_healthy
       nodemanager-routes:
         condition: service_healthy
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: vulhub-hadoop-unauthorized-yarn
   isoloom-check-namenode:
     image: curlimages/curl:8.11.1
     profiles:
@@ -297,6 +332,9 @@ services:
         condition: service_healthy
       nodemanager-routes:
         condition: service_healthy
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: vulhub-hadoop-unauthorized-yarn
   isoloom-check-datanode:
     image: curlimages/curl:8.11.1
     profiles:
@@ -324,6 +362,9 @@ services:
         condition: service_healthy
       nodemanager-routes:
         condition: service_healthy
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: vulhub-hadoop-unauthorized-yarn
   isoloom-check-resourcemanager:
     image: curlimages/curl:8.11.1
     profiles:
@@ -351,6 +392,9 @@ services:
         condition: service_healthy
       nodemanager-routes:
         condition: service_healthy
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: vulhub-hadoop-unauthorized-yarn
   isoloom-check-nodemanager:
     image: curlimages/curl:8.11.1
     profiles:
@@ -378,6 +422,9 @@ services:
         condition: service_healthy
       nodemanager-routes:
         condition: service_healthy
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: vulhub-hadoop-unauthorized-yarn
   isoloom-probe-amd64:
     image: busybox:1.37.0-musl
     platform: linux/amd64
@@ -389,11 +436,20 @@ services:
     - isoloom-probe-amd64:/probe
     network_mode: none
     restart: no
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: vulhub-hadoop-unauthorized-yarn
 networks:
   lab:
     ipam:
       config:
       - subnet: 10.60.251.0/24
         gateway: 10.60.251.1
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: vulhub-hadoop-unauthorized-yarn
 volumes:
-  isoloom-probe-amd64: {}
+  isoloom-probe-amd64:
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: vulhub-hadoop-unauthorized-yarn
