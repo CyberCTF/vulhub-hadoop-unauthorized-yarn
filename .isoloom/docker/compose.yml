@@ -216,6 +216,11 @@ services:
     networks:
       lab:
         ipv4_address: 10.60.251.11
+    environment:
+      CTF_FLAG_MAIN: ${CTF_FLAG_MAIN:-}
+    volumes:
+    - nodemanager-ctf:/ctf
+    - isoloom-probe-amd64:/.isoloom-probe:ro
     healthcheck:
       test:
       - CMD
@@ -227,8 +232,6 @@ services:
       timeout: 3s
       retries: 60
       start_period: 10s
-    volumes:
-    - isoloom-probe-amd64:/.isoloom-probe:ro
     depends_on:
       isoloom-probe-amd64:
         condition: service_completed_successfully
@@ -269,6 +272,26 @@ services:
     labels:
       isoloom.managed: 'true'
       isoloom.environment: vulhub-hadoop-unauthorized-yarn
+  nodemanager-init-1:
+    image: isoloom/vulhub-hadoop-unauthorized-yarn-nodemanager
+    entrypoint:
+    - /bin/sh
+    - /isoloom/init/flag.sh
+    volumes:
+    - ../../ctf/flag.sh:/isoloom/init/flag.sh:ro
+    - nodemanager-ctf:/ctf
+    network_mode: service:nodemanager
+    environment:
+      CTF_FLAG_MAIN: ${CTF_FLAG_MAIN:-}
+    depends_on:
+      nodemanager:
+        condition: service_healthy
+      nodemanager-routes:
+        condition: service_healthy
+    restart: no
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: vulhub-hadoop-unauthorized-yarn
   isoloom-check:
     image: curlimages/curl:8.11.1
     profiles:
@@ -300,6 +323,8 @@ services:
         condition: service_healthy
       nodemanager:
         condition: service_healthy
+      nodemanager-init-1:
+        condition: service_completed_successfully
       nodemanager-routes:
         condition: service_healthy
     labels:
@@ -330,6 +355,8 @@ services:
         condition: service_healthy
       nodemanager:
         condition: service_healthy
+      nodemanager-init-1:
+        condition: service_completed_successfully
       nodemanager-routes:
         condition: service_healthy
     labels:
@@ -360,6 +387,8 @@ services:
         condition: service_healthy
       nodemanager:
         condition: service_healthy
+      nodemanager-init-1:
+        condition: service_completed_successfully
       nodemanager-routes:
         condition: service_healthy
     labels:
@@ -390,6 +419,8 @@ services:
         condition: service_healthy
       nodemanager:
         condition: service_healthy
+      nodemanager-init-1:
+        condition: service_completed_successfully
       nodemanager-routes:
         condition: service_healthy
     labels:
@@ -420,6 +451,8 @@ services:
         condition: service_healthy
       nodemanager:
         condition: service_healthy
+      nodemanager-init-1:
+        condition: service_completed_successfully
       nodemanager-routes:
         condition: service_healthy
     labels:
@@ -449,6 +482,10 @@ networks:
       isoloom.managed: 'true'
       isoloom.environment: vulhub-hadoop-unauthorized-yarn
 volumes:
+  nodemanager-ctf:
+    labels:
+      isoloom.managed: 'true'
+      isoloom.environment: vulhub-hadoop-unauthorized-yarn
   isoloom-probe-amd64:
     labels:
       isoloom.managed: 'true'

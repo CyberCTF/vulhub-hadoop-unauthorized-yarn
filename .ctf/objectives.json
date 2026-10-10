@@ -1,0 +1,66 @@
+{
+  "objectives": [
+    {
+      "key": "main",
+      "title": "Read the flag",
+      "prompt": "Submit a YARN application through the unauthenticated ResourceManager REST API; it runs on the NodeManager, where /ctf/flag is.",
+      "check": {
+        "evidence": "SECRET",
+        "format": "FLAG{%s}"
+      },
+      "dev": "FLAG{dev-vulhub-hadoop-unauthorized-yarn}",
+      "hints": [
+        "The ResourceManager's REST API under /ws/v1/cluster/apps accepts new applications from anyone; read the YARN REST API documentation.",
+        "Applications run on the NodeManager, not the ResourceManager. The flag is at /ctf/flag there, and the NodeManager's web UI on port 8042 shows container logs."
+      ],
+      "steps": [
+        {
+          "key": "version",
+          "title": "Identify the product",
+          "prompt": "Which version of Hadoop does the cluster run? (number only)",
+          "check": {
+            "answer_regex": "2\\.8\\.1"
+          }
+        },
+        {
+          "key": "endpoint",
+          "title": "Find the endpoint",
+          "prompt": "Which REST path hands out a new application id? (path)",
+          "check": {
+            "answer": [
+              "/ws/v1/cluster/apps/new-application",
+              "ws/v1/cluster/apps/new-application",
+              "new-application",
+              "/new-application"
+            ]
+          }
+        },
+        {
+          "key": "field",
+          "title": "Find the field",
+          "prompt": "Which part of the application submission carries the command to run? (field name)",
+          "check": {
+            "answer": [
+              "am-container-spec",
+              "am container spec",
+              "commands",
+              "command"
+            ]
+          }
+        },
+        {
+          "key": "daemon",
+          "title": "Identify the executor",
+          "prompt": "Which YARN daemon actually runs the container?",
+          "check": {
+            "answer": [
+              "nodemanager",
+              "node manager",
+              "the nodemanager"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

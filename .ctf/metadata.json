@@ -1,8 +1,1 @@
-{
-  "title": "Hadoop YARN ResourceManager Unauthenticated RCE",
-  "description": "A Hadoop 2.8.1 cluster (HDFS and YARN) without Kerberos: the ResourceManager REST API on port 8088 lets anyone create and submit an application whose container command runs on the NodeManager.",
-  "question": "Submit a YARN application through the unauthenticated ResourceManager API to run commands and get a shell.",
-  "category": "NETWORK",
-  "difficulty": 2,
-  "evidence_kind": "SECRET"
-}
+{"title": "Hadoop YARN ResourceManager Unauthenticated RCE", "description": "A Hadoop 2.8.1 cluster (HDFS and YARN) without Kerberos: the ResourceManager REST API on port 8088 lets anyone create and submit an application whose container command runs on the NodeManager.", "question": "Submit a YARN application through the unauthenticated ResourceManager API to run commands on the NodeManager and read /ctf/flag.", "category": "NETWORK", "difficulty": 2, "evidence_kind": "SECRET"}

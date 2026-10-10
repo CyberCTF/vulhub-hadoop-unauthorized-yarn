@@ -6,6 +6,9 @@
 version: 1
 name: vulhub-hadoop-unauthorized-yarn
 
+# Given by the CyberCTF launcher: this player's flag. Without it the development flag.
+inputs: [CTF_FLAG_MAIN]
+
 networks:
   lab: { cidr: 10.60.251.0/24, internet: false }
 
@@ -44,8 +47,11 @@ machines:
     services: [{ port: 8042, name: nodemanager-web }]
     resources: { cpus: 1, memory_mb: 1024 }
     depends_on: [resourcemanager]
+    inputs: [CTF_FLAG_MAIN]
+    volumes: { ctf: /ctf }   # the flag, written by ctf/flag.sh at every start
     docker:
       build: build/nodemanager
+      init: [ctf/flag.sh]
 
 checks:
   - name: the ResourceManager answers
