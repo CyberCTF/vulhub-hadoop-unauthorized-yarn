@@ -7,51 +7,64 @@ version: 1
 name: vulhub-hadoop-unauthorized-yarn
 
 # Given by the CyberCTF launcher: this player's flag. Without it the development flag.
-inputs: [CTF_FLAG_MAIN]
+inputs:
+  CTF_FLAG_MAIN: {}
 
 networks:
-  lab: { cidr: 10.60.251.0/24, internet: false }
+  lab: {cidr: 10.60.251.0/24, internet: false}
 
 machines:
   namenode:
-    networks: { lab: 20 }
-    services:
-      - { port: 8020, name: hdfs }
-      - { port: 50070, name: namenode-web, http: true, publish: 50070 }
-    resources: { cpus: 1, memory_mb: 768 }
-    docker:
+    networks: {lab: 20}
+    resources: {cpus: 1, memory_mb: 768}
+    ports:
+      hdfs:
+        port: 8020
+      namenode-web:
+        port: 50070
+        protocol: http
+        publish: true
+    app:
       build: build/namenode
-
   datanode:
-    networks: { lab: 21 }
-    services:
-      - { port: 50010, name: data }
-      - { port: 50075, name: datanode-web }
-    resources: { cpus: 1, memory_mb: 768 }
+    networks: {lab: 21}
+    resources: {cpus: 1, memory_mb: 768}
     depends_on: [namenode]
-    docker:
+    ports:
+      data:
+        port: 50010
+      datanode-web:
+        port: 50075
+    app:
       build: build/datanode
-
   resourcemanager:
-    networks: { lab: 10 }
-    services:
-      - { port: 8088, name: web, http: true, publish: 8088 }
-      - { port: 8032, name: rm-rpc }
-    resources: { cpus: 1, memory_mb: 1024 }
+    networks: {lab: 10}
+    resources: {cpus: 1, memory_mb: 1024}
     depends_on: [namenode]
-    docker:
+    ports:
+      web:
+        port: 8088
+        protocol: http
+        publish: true
+      rm-rpc:
+        port: 8032
+    app:
       build: build/resourcemanager
-
   nodemanager:
-    networks: { lab: 11 }
-    services: [{ port: 8042, name: nodemanager-web }]
-    resources: { cpus: 1, memory_mb: 1024 }
+    networks: {lab: 11}
+    resources: {cpus: 1, memory_mb: 1024}
     depends_on: [resourcemanager]
-    inputs: [CTF_FLAG_MAIN]
-    volumes: { ctf: /ctf }   # the flag, written by ctf/flag.sh at every start
-    docker:
+    volumes: {ctf: /ctf}     # the flag, written by ctf/flag.sh at every start
+    ports:
+      nodemanager-web:
+        port: 8042
+    files:
+      - path: /run/lab/ctf_flag_main
+        input: CTF_FLAG_MAIN
+    setup:
+      - ctf/flag.sh
+    app:
       build: build/nodemanager
-      init: [ctf/flag.sh]
 
 checks:
   - name: the ResourceManager answers
@@ -62,5 +75,5 @@ checks:
     wait: 300
 
 message: |
-  A Hadoop 2.8.1 YARN ResourceManager answers at http://localhost:{{ machines.resourcemanager.services.0.publish }}/cluster.
+  A Hadoop 2.8.1 YARN ResourceManager answers at {{ machines.resourcemanager.ports.web.url }}cluster.
   Its REST API, under /ws/v1/cluster/apps, takes new applications from anyone.
